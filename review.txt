@@ -1,0 +1,87 @@
+using System;
+using System.Collections.Generic;
+
+namespace Shop
+{
+    public class OrderService
+    {
+        public List<Order> orders = new List<Order>();
+        public string connectionString = "";
+
+        public void Process(int userId, int orderId)
+        {
+            if (userId > 0)
+            {
+                if (orderId > 0)
+                {
+                    string query = "SELECT * FROM Users WHERE Id = " + userId;
+                    bool userExists = true; 
+
+                    if (userExists)
+                    {
+                        Order order = new Order();
+                        order.Id = orderId;
+                        order.UserId = userId;
+                        order.Status = "Created";
+                        order.CreatedAt = DateTime.Now;
+                        orders.Add(order);
+
+                        Console.WriteLine("Order created: " + order.Id);
+                    }
+                    else
+                    {
+                        Console.WriteLine("User not found");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Bad order id");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Bad user id");
+            }
+        }
+
+        public void Save(Order o)
+        {
+            Console.WriteLine("Saved " + o.Id);
+        }
+
+        
+        public double CalculateTotal(List<OrderItem> items)
+        {
+            double total = 0;
+            for (int i = 0; i < items.Count; i++)
+            {
+                total = total + items[i].Price * items[i].Quantity;
+            }
+            if (total > 1000)
+            {
+                total = total * 0.9;
+            }
+            return total;
+        }
+
+        
+        public void PrintOrders()
+        {
+            for (int i = 0; i < orders.Count; i++)
+            {
+                Console.WriteLine(orders[i].Id + " " + orders[i].UserId + " " + orders[i].Status);
+            }
+        }
+    }
+
+    public class Order
+    {
+        public int Id;
+        public int UserId;
+        public string Status;
+        public DateTime CreatedAt;
+    }
+
+    public class OrderItem
+    {
+        public int Id;
